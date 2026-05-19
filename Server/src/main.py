@@ -612,6 +612,10 @@ def create_mcp_server(project_scoped_tools: bool) -> FastMCP:
     mcp.add_middleware(unity_middleware)
     logger.info("Registered Unity instance middleware for session-based routing")
 
+    # PuddingUnityMCP fork: token saver middleware (no-op when env vars unset).
+    from transport.token_saver_middleware import PuddingTokenSaverMiddleware
+    mcp.add_middleware(PuddingTokenSaverMiddleware())
+
     # Initialize API key authentication if in remote-hosted mode
     if config.http_remote_hosted and config.api_key_validation_url:
         ApiKeyService(
@@ -798,6 +802,26 @@ Examples:
     config.transport_mode = args.transport or os.environ.get(
         "UNITY_MCP_TRANSPORT", "stdio")
     logger.info(f"Transport mode: {config.transport_mode}")
+
+    # PuddingUnityMCP fork: token saver env vars. All optional; unset = upstream behaviour.
+    def _parse_csv(name: str) -> tuple[str, ...] | None:
+        raw = os.environ.get(name)
+        if not raw:
+            return None
+        items = tuple(item.strip() for item in raw.split(",") if item.strip())
+        return items or None
+
+    config.enabled_tools = _parse_csv("UNITY_MCP_ENABLED_TOOLS")
+    config.enabled_resources = _parse_csv("UNITY_MCP_ENABLED_RESOURCES")
+    _policy_env = (os.environ.get("UNITY_MCP_RESPONSE_POLICY") or "raw").strip().lower()
+    config.response_policy = _policy_env if _policy_env in ("raw", "summary_reference", "semantic_compression") else "raw"
+    try:
+        _threshold_env = os.environ.get("UNITY_MCP_RESPONSE_THRESHOLD_TOKENS")
+        if _threshold_env:
+            config.response_threshold_tokens = max(0, int(_threshold_env))
+    except ValueError:
+        logger.warning("Invalid UNITY_MCP_RESPONSE_THRESHOLD_TOKENS, using default 1200")
+    config.response_store_dir = os.environ.get("UNITY_MCP_RESPONSE_STORE_DIR") or None
 
     config.http_remote_hosted = (
         bool(args.http_remote_hosted)

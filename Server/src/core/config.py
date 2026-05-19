@@ -62,6 +62,14 @@ class ServerConfig:
     # Align with telemetry.py default Cloud Run endpoint
     telemetry_endpoint: str = "https://api-prod.coplay.dev/telemetry/events"
 
+    # PuddingUnityMCP token saver settings (fork additions).
+    # See Server/src/transport/token_saver_middleware.py and PUDDING.md.
+    enabled_tools: tuple[str, ...] | None = None
+    enabled_resources: tuple[str, ...] | None = None
+    response_policy: str = "raw"  # raw | summary_reference | semantic_compression
+    response_threshold_tokens: int = 1200
+    response_store_dir: str | None = None
+
 
 # Create a global config instance
 config = ServerConfig()

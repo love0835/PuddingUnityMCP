@@ -11,6 +11,7 @@ from pydantic import BaseModel
 from core.telemetry_decorator import telemetry_resource
 from core.logging_decorator import log_execution
 
+from core.config import config
 from services.registry import get_registered_resources
 from utils.module_discovery import discover_modules
 
@@ -59,6 +60,11 @@ def register_all_resources(mcp: FastMCP, *, project_scoped_tools: bool = True):
         logger.warning("No MCP resources registered!")
         return
 
+    # PuddingUnityMCP fork: optional whitelist via UNITY_MCP_ENABLED_RESOURCES.
+    # FastMCP has no on_list_resources middleware hook, so we filter at registration time.
+    enabled_resources = set(config.enabled_resources or ())
+    skipped_by_whitelist = 0
+
     registered_count = 0
     for resource_info in resources:
         func = resource_info['func']
@@ -70,6 +76,10 @@ def register_all_resources(mcp: FastMCP, *, project_scoped_tools: bool = True):
         if not project_scoped_tools and resource_name == "custom_tools":
             logger.info(
                 "Skipping custom_tools resource registration (project-scoped tools disabled)")
+            continue
+
+        if enabled_resources and uri not in enabled_resources and resource_name not in enabled_resources:
+            skipped_by_whitelist += 1
             continue
 
         # Check if URI contains query parameters (e.g., {?unity_instance})
@@ -107,3 +117,8 @@ def register_all_resources(mcp: FastMCP, *, project_scoped_tools: bool = True):
 
     logger.info(
         f"Registered {registered_count} MCP resources ({len(resources)} unique)")
+    if skipped_by_whitelist:
+        logger.info(
+            "PuddingUnityMCP: skipped %d resources outside UNITY_MCP_ENABLED_RESOURCES whitelist",
+            skipped_by_whitelist,
+        )
