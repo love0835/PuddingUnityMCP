@@ -366,6 +366,9 @@ namespace MCPForUnity.Editor.Windows
 
             guiCreated = true;
 
+            // PuddingUnityMCP fork: translate the entire window when UNITY_MCP_LANG != "en".
+            PuddingI18n.Apply(rootVisualElement);
+
             // Initial updates
             RefreshAllData();
             QueueUpdateCheck();

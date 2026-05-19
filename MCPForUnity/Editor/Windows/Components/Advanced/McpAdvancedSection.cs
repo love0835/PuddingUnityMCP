@@ -313,6 +313,12 @@ namespace MCPForUnity.Editor.Windows.Components.Advanced
                 puddingLangDropdown.RegisterValueChangedCallback(evt =>
                 {
                     PuddingServerEnv.CurrentLang = evt.newValue;
+                    // Best-effort: re-translate the visible window immediately. Switching
+                    // from zh_TW back to en will not restore English labels in place —
+                    // close and reopen Window > MCP for Unity to see the full effect.
+                    var top = Root;
+                    while (top?.parent != null) top = top.parent;
+                    PuddingI18n.Apply(top);
                 });
             }
             if (puddingOptimizeToggle != null)
