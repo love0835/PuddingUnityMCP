@@ -33,6 +33,7 @@ All settings are environment variables, set wherever the MCP server is launched 
 | `UNITY_MCP_RESPONSE_POLICY` | `raw` | One of `raw`, `summary_reference`, `semantic_compression`. Applies to tool results and resource reads that exceed the threshold. |
 | `UNITY_MCP_RESPONSE_THRESHOLD_TOKENS` | `1200` | Estimated tokens (`bytes/4`) above which the policy kicks in. Smaller responses pass through unchanged. |
 | `UNITY_MCP_RESPONSE_STORE_DIR` | unset | Directory where `summary_reference` writes original payloads (one `<sha256>.txt` per response). Disabled when unset. |
+| `UNITY_MCP_LANG` | `en` | Tool schema language. Set to `zh_TW` for full Traditional Chinese (Taiwan). Unrecognized values fall back to `en`. |
 
 ### Policy behaviours
 
@@ -61,6 +62,27 @@ Expected savings: MCP traffic **~93%**, Codex agent total **~66%**. Tune the whi
 | `RESPONSE_POLICY=semantic_compression` | Repeated log lines collapsed; stack traces capped at 6 frames; long output truncated at ~2,400 chars | Use `raw` while debugging concrete errors |
 | `RESPONSE_POLICY=summary_reference` | Agent sees only a 12-line summary + sha256 URI; URI is informational only (no resolver) | Set `UNITY_MCP_RESPONSE_STORE_DIR` so the original is on disk for human review |
 | `ENABLED_RESOURCES` | Filtered at registration time, so non-whitelisted resources are not even advertised | Restart server to pick up whitelist changes |
+
+## Language / i18n
+
+Set `UNITY_MCP_LANG=zh_TW` to get **Traditional Chinese (Taiwan) tool schemas**. Coverage:
+
+- All 39 tools — `description`, `ToolAnnotations.title`, every `Annotated[T, "..."]` parameter description
+- The high-level `_build_instructions()` text
+- The 9 `TOOL_GROUPS` descriptions
+
+The translation layer mutates `func.__annotations__` at decorator time before FastMCP reads the schema, so MCP clients (Claude, Codex, Cursor) see Chinese natively — no extra config on the client side.
+
+**Behaviour:**
+- Default `en` is a complete no-op — original strings reach FastMCP unchanged.
+- Missing translations (e.g. an upstream tool added after the translation table was written) fall back to English silently. No errors, no warnings.
+- Translations live in `Server/src/transport/translations/zh_TW.py` (which composes `_batch1`–`_batch4` and `_meta`). Edit those files to fix wording.
+
+**Adding a new language:**
+1. Create `Server/src/transport/translations/<bcp47>.py` (e.g. `ja_JP.py`).
+2. Export `TOOL_TRANSLATIONS` (dict keyed by tool name) and optionally `INSTRUCTIONS`, `GROUP_TRANSLATIONS`.
+3. Each tool entry follows: `{"description": "...", "title": "...", "params": {"param_name": "...", ...}}`. All keys are optional — supply only what you want translated.
+4. Set `UNITY_MCP_LANG=ja_JP` to activate.
 
 ## Relationship to upstream `manage_tools`
 

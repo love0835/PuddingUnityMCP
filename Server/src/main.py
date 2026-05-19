@@ -287,6 +287,16 @@ async def server_lifespan(server: FastMCP) -> AsyncIterator[dict[str, Any]]:
 
 
 def _build_instructions(project_scoped_tools: bool) -> str:
+    # PuddingUnityMCP fork: i18n hook. If a translated instructions block exists for
+    # the active language, use it instead of the English default.
+    try:
+        from transport.translations import get_instructions_for_lang
+        translated = get_instructions_for_lang(config.tool_lang, project_scoped_tools)
+        if translated is not None:
+            return translated
+    except Exception:
+        pass
+
     if project_scoped_tools:
         custom_tools_note = (
             "I have a dynamic tool system. Always check the mcpforunity://custom-tools resource first "
@@ -822,6 +832,10 @@ Examples:
     except ValueError:
         logger.warning("Invalid UNITY_MCP_RESPONSE_THRESHOLD_TOKENS, using default 1200")
     config.response_store_dir = os.environ.get("UNITY_MCP_RESPONSE_STORE_DIR") or None
+
+    # PuddingUnityMCP fork: i18n. UNITY_MCP_LANG=zh_TW switches tool schemas to Traditional Chinese.
+    _lang_env = (os.environ.get("UNITY_MCP_LANG") or "en").strip()
+    config.tool_lang = _lang_env if _lang_env else "en"
 
     config.http_remote_hosted = (
         bool(args.http_remote_hosted)

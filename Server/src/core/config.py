@@ -70,6 +70,11 @@ class ServerConfig:
     response_threshold_tokens: int = 1200
     response_store_dir: str | None = None
 
+    # PuddingUnityMCP i18n settings (fork additions).
+    # See Server/src/transport/translations/__init__.py and PUDDING.md.
+    # "en" = upstream behaviour (no translation). "zh_TW" = Traditional Chinese.
+    tool_lang: str = "en"
+
 
 # Create a global config instance
 config = ServerConfig()

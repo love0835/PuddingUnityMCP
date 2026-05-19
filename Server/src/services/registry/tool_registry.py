@@ -95,10 +95,22 @@ def mcp_for_unity_tool(
                 "Expected None or a non-empty string."
             )
 
+        # PuddingUnityMCP fork: i18n hook. No-op when UNITY_MCP_LANG is unset or "en".
+        translated_description = description
+        try:
+            from core.config import config
+            from transport.translations import apply_translation_to_func
+            translated_description = apply_translation_to_func(
+                func, tool_name, description, tool_kwargs, lang=config.tool_lang
+            )
+        except Exception:
+            # Translation must never break registration; fall back to English silently.
+            translated_description = description
+
         _tool_registry.append({
             'func': func,
             'name': tool_name,
-            'description': description,
+            'description': translated_description,
             'unity_target': normalized_unity_target,
             'group': resolved_group,
             'kwargs': tool_kwargs,
