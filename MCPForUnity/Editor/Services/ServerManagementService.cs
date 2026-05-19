@@ -318,7 +318,9 @@ namespace MCPForUnity.Editor.Services
                 catch { }
 
                 // Launch the server in a new terminal window (keeps user-visible logs).
-                var startInfo = CreateTerminalProcessStartInfo(launchCommand);
+                // PuddingUnityMCP fork: inject env vars (UNITY_MCP_LANG, response policy, etc.)
+                // chosen via Window > MCP for Unity > Pudding Settings.
+                var startInfo = CreateTerminalProcessStartInfo(launchCommand, Helpers.PuddingServerEnv.BuildEnv());
                 System.Diagnostics.Process.Start(startInfo);
                 if (!string.IsNullOrEmpty(pidFilePath))
                 {
@@ -940,6 +942,14 @@ namespace MCPForUnity.Editor.Services
         private System.Diagnostics.ProcessStartInfo CreateTerminalProcessStartInfo(string command)
         {
             return _terminalLauncher.CreateTerminalProcessStartInfo(command);
+        }
+
+        // PuddingUnityMCP fork: overload that passes through env vars to the spawned terminal.
+        private System.Diagnostics.ProcessStartInfo CreateTerminalProcessStartInfo(
+            string command,
+            System.Collections.Generic.IDictionary<string, string> env)
+        {
+            return _terminalLauncher.CreateTerminalProcessStartInfo(command, env);
         }
     }
 }

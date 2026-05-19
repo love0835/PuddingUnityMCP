@@ -61,6 +61,20 @@
                 <ui:Toggle name="allow-insecure-remote-http-toggle" class="setting-toggle" />
             </ui:VisualElement>
 
+            <!-- PuddingUnityMCP fork: i18n + token saver controls. Applied next time the server is started. -->
+            <ui:VisualElement class="override-row" style="margin-top: 12px;">
+                <ui:Label text="PuddingUnityMCP" class="override-label" />
+            </ui:VisualElement>
+            <ui:VisualElement class="setting-row">
+                <ui:Label text="Tool Language:" class="setting-label" />
+                <ui:DropdownField name="pudding-lang-dropdown" class="setting-toggle" />
+            </ui:VisualElement>
+            <ui:VisualElement class="setting-row">
+                <ui:Label text="Enable Token Optimization:" class="setting-label" />
+                <ui:Toggle name="pudding-optimize-toggle" class="setting-toggle" />
+            </ui:VisualElement>
+            <ui:Label name="pudding-restart-hint" text="Changes apply next time the MCP server is started." class="help-text" />
+
             <ui:VisualElement class="override-row" style="margin-top: 8px;">
                 <ui:Label text="Screenshots Folder:" class="override-label" />
             </ui:VisualElement>

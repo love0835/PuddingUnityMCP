@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace MCPForUnity.Editor.Services.Server
@@ -15,6 +16,13 @@ namespace MCPForUnity.Editor.Services.Server
         /// <param name="command">The command to execute in the terminal</param>
         /// <returns>A configured ProcessStartInfo for launching the terminal</returns>
         ProcessStartInfo CreateTerminalProcessStartInfo(string command);
+
+        /// <summary>
+        /// PuddingUnityMCP fork: same as above, plus inline environment variables that
+        /// are exported to the spawned terminal before the command runs.
+        /// Pass an empty/null dictionary for upstream behaviour.
+        /// </summary>
+        ProcessStartInfo CreateTerminalProcessStartInfo(string command, IDictionary<string, string> env);
 
         /// <summary>
         /// Gets the project root path for storing terminal scripts.

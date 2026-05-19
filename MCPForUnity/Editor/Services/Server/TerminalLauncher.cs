@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using MCPForUnity.Editor.Helpers;
 using UnityEngine;
 
@@ -28,6 +30,14 @@ namespace MCPForUnity.Editor.Services.Server
         /// <inheritdoc/>
         public System.Diagnostics.ProcessStartInfo CreateTerminalProcessStartInfo(string command)
         {
+            return CreateTerminalProcessStartInfo(command, null);
+        }
+
+        /// <inheritdoc/>
+        public System.Diagnostics.ProcessStartInfo CreateTerminalProcessStartInfo(
+            string command,
+            IDictionary<string, string> env)
+        {
             if (string.IsNullOrWhiteSpace(command))
                 throw new ArgumentException("Command cannot be empty", nameof(command));
 
@@ -43,6 +53,7 @@ namespace MCPForUnity.Editor.Services.Server
                 "#!/bin/bash\n" +
                 "set -e\n" +
                 "clear\n" +
+                BuildEnvBlockBash(env) +
                 $"{command}\n");
             ExecPath.TryRun("/bin/chmod", $"+x \"{scriptPath}\"", Application.dataPath, out _, out _, 3000);
             return new System.Diagnostics.ProcessStartInfo
@@ -61,6 +72,7 @@ namespace MCPForUnity.Editor.Services.Server
                 scriptPath,
                 "@echo off\r\n" +
                 "cls\r\n" +
+                BuildEnvBlockCmd(env) +
                 command + "\r\n");
             return new System.Diagnostics.ProcessStartInfo
             {
@@ -73,7 +85,7 @@ namespace MCPForUnity.Editor.Services.Server
             // Linux: Try common terminal emulators.
             // ProcessStartInfo passes the argument string directly to the terminal, so we only
             // need to escape for the double-quoted bash -c payload — no inner single quotes.
-            string script = $"{command}; exec bash";
+            string script = BuildEnvBlockBash(env) + $"{command}; exec bash";
             string escapedScriptForArg = script
                 .Replace("\\", "\\\\")
                 .Replace("\"", "\\\"");
@@ -137,6 +149,40 @@ namespace MCPForUnity.Editor.Services.Server
                 CreateNoWindow = true
             };
 #endif
+        }
+
+        // PuddingUnityMCP fork: build `KEY="VALUE"` export blocks injected at the
+        // top of the launch script so the spawned Python server sees them.
+        private static string BuildEnvBlockBash(IDictionary<string, string> env)
+        {
+            if (env == null || env.Count == 0) return string.Empty;
+            var sb = new StringBuilder();
+            foreach (var kv in env)
+            {
+                if (string.IsNullOrEmpty(kv.Key)) continue;
+                var safeValue = (kv.Value ?? string.Empty).Replace("\\", "\\\\").Replace("\"", "\\\"");
+                sb.Append("export ").Append(kv.Key).Append("=\"").Append(safeValue).Append("\"\n");
+            }
+            return sb.ToString();
+        }
+
+        private static string BuildEnvBlockCmd(IDictionary<string, string> env)
+        {
+            if (env == null || env.Count == 0) return string.Empty;
+            var sb = new StringBuilder();
+            foreach (var kv in env)
+            {
+                if (string.IsNullOrEmpty(kv.Key)) continue;
+                // cmd `set` does not require quoting; carets escape special chars.
+                var safeValue = (kv.Value ?? string.Empty)
+                    .Replace("^", "^^")
+                    .Replace("&", "^&")
+                    .Replace("<", "^<")
+                    .Replace(">", "^>")
+                    .Replace("|", "^|");
+                sb.Append("set ").Append(kv.Key).Append('=').Append(safeValue).Append("\r\n");
+            }
+            return sb.ToString();
         }
     }
 }

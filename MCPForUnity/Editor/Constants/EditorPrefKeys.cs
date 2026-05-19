@@ -71,5 +71,10 @@ namespace MCPForUnity.Editor.Constants
         internal const string LogRecordEnabled = "MCPForUnity.LogRecordEnabled";
 
         internal const string ExecuteCodeCompiler = "MCPForUnity.ExecuteCode.Compiler";
+
+        // PuddingUnityMCP fork: i18n + token saver toggles applied when server is launched.
+        // See Helpers/PuddingServerEnv.cs and PUDDING.md.
+        internal const string PuddingLang = "MCPForUnity.Pudding.Lang";              // "en" | "zh_TW"
+        internal const string PuddingOptimize = "MCPForUnity.Pudding.Optimize";      // bool, default true
     }
 }

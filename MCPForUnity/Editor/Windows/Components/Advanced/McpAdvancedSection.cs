@@ -45,6 +45,11 @@ namespace MCPForUnity.Editor.Windows.Components.Advanced
         private Label healthStatus;
         private Button testConnectionButton;
 
+        // PuddingUnityMCP fork
+        private DropdownField puddingLangDropdown;
+        private Toggle puddingOptimizeToggle;
+        private static readonly System.Collections.Generic.List<string> PuddingLangChoices = new() { "en", "zh_TW" };
+
         // Events
         public event Action OnGitUrlChanged;
         public event Action OnHttpServerCommandUpdateRequested;
@@ -90,6 +95,10 @@ namespace MCPForUnity.Editor.Windows.Components.Advanced
             healthIndicator = Root.Q<VisualElement>("health-indicator");
             healthStatus = Root.Q<Label>("health-status");
             testConnectionButton = Root.Q<Button>("test-connection-button");
+
+            // PuddingUnityMCP fork
+            puddingLangDropdown = Root.Q<DropdownField>("pudding-lang-dropdown");
+            puddingOptimizeToggle = Root.Q<Toggle>("pudding-optimize-toggle");
         }
 
         private void InitializeUI()
@@ -197,6 +206,25 @@ namespace MCPForUnity.Editor.Windows.Components.Advanced
             }
             UpdatePathOverrides();
             UpdateDeploymentSection();
+
+            // PuddingUnityMCP fork: initial values + tooltips
+            if (puddingLangDropdown != null)
+            {
+                puddingLangDropdown.choices = PuddingLangChoices;
+                var current = PuddingServerEnv.CurrentLang;
+                if (!PuddingLangChoices.Contains(current)) current = PuddingServerEnv.DefaultLang;
+                puddingLangDropdown.SetValueWithoutNotify(current);
+                puddingLangDropdown.tooltip = "Tool schema language. 'zh_TW' loads Traditional Chinese descriptions. Changes apply next time the MCP server is started.";
+                var langLabel = puddingLangDropdown.parent?.Q<Label>();
+                if (langLabel != null) langLabel.tooltip = puddingLangDropdown.tooltip;
+            }
+            if (puddingOptimizeToggle != null)
+            {
+                puddingOptimizeToggle.SetValueWithoutNotify(PuddingServerEnv.OptimizeEnabled);
+                puddingOptimizeToggle.tooltip = "When enabled, large MCP responses are compressed (semantic_compression, threshold ~1200 tokens). Disable to get unmodified upstream responses. Changes apply next time the MCP server is started.";
+                var optLabel = puddingOptimizeToggle.parent?.Q<Label>();
+                if (optLabel != null) optLabel.tooltip = puddingOptimizeToggle.tooltip;
+            }
         }
 
         private void RegisterCallbacks()
@@ -276,6 +304,22 @@ namespace MCPForUnity.Editor.Windows.Components.Advanced
                 {
                     EditorPrefs.SetBool(EditorPrefKeys.AllowInsecureRemoteHttp, evt.newValue);
                     OnHttpServerCommandUpdateRequested?.Invoke();
+                });
+            }
+
+            // PuddingUnityMCP fork: persist language + optimization preferences.
+            if (puddingLangDropdown != null)
+            {
+                puddingLangDropdown.RegisterValueChangedCallback(evt =>
+                {
+                    PuddingServerEnv.CurrentLang = evt.newValue;
+                });
+            }
+            if (puddingOptimizeToggle != null)
+            {
+                puddingOptimizeToggle.RegisterValueChangedCallback(evt =>
+                {
+                    PuddingServerEnv.OptimizeEnabled = evt.newValue;
                 });
             }
 
