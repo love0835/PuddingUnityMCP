@@ -156,6 +156,10 @@ namespace MCPForUnity.Editor.Windows.Components.AssetGen
             outputRootField?.SetValueWithoutNotify(AssetGenPrefs.OutputRoot);
             autoNormalizeToggle?.SetValueWithoutNotify(AssetGenPrefs.AutoNormalize);
             UpdateGltfastNotice();
+
+            // PuddingUnityMCP fork: provider rows are rebuilt after the window-level
+            // translation pass, so re-apply on this subtree.
+            PuddingI18n.Apply(Root);
         }
 
         private void BuildProviderRows()
@@ -534,7 +538,7 @@ namespace MCPForUnity.Editor.Windows.Components.AssetGen
                 return;
             }
 
-            label.text = text;
+            label.text = PuddingI18n.T(text);
             label.style.color = ok
                 ? new Color(0.4f, 0.8f, 0.4f)
                 : new Color(0.7f, 0.7f, 0.7f);

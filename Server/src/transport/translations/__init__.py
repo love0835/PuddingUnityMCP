@@ -18,9 +18,15 @@ never breaks the server.
 """
 from __future__ import annotations
 
+import copy
 import logging
 import typing
 from typing import Annotated, Any, Callable
+
+try:
+    from pydantic.fields import FieldInfo as _FieldInfo
+except ImportError:  # pragma: no cover - pydantic is a hard dep of fastmcp
+    _FieldInfo = None
 
 logger = logging.getLogger("mcp-for-unity-server")
 
@@ -112,6 +118,14 @@ def _rewrite_annotation(annot: Any, new_description: str) -> Any:
         for m in metadata:
             if not replaced and isinstance(m, str):
                 new_metadata.append(new_description)
+                replaced = True
+            elif not replaced and _FieldInfo is not None and isinstance(m, _FieldInfo):
+                # Pydantic style: Annotated[T, Field(description="...")]. Swap the
+                # description on a copy so the original FieldInfo (defaults, constraints)
+                # is never mutated.
+                field_copy = copy.copy(m)
+                field_copy.description = new_description
+                new_metadata.append(field_copy)
                 replaced = True
             else:
                 new_metadata.append(m)

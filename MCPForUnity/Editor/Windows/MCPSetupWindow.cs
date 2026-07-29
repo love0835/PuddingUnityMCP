@@ -113,6 +113,9 @@ namespace MCPForUnity.Editor.Windows
 
             // Initial update
             UpdateUI();
+
+            // PuddingUnityMCP fork: translate the setup wizard when UNITY_MCP_LANG != "en".
+            PuddingI18n.Apply(rootVisualElement);
         }
 
         private void OnEnable()
@@ -154,6 +157,10 @@ namespace MCPForUnity.Editor.Windows
             stepDeps.style.display = DisplayStyle.None;
             stepClients.style.display = DisplayStyle.Flex;
             PopulateClientsList();
+
+            // PuddingUnityMCP fork: the clients list is rebuilt after the CreateGUI
+            // translation pass, so re-apply on this subtree.
+            PuddingI18n.Apply(stepClients);
         }
 
         private void PopulateClientsList()

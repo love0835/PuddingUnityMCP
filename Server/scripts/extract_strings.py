@@ -29,12 +29,27 @@ def _str_from(node):
     return None
 
 
+def _field_desc_from(node):
+    """Return the description kwarg of a Field(...) call node; else None."""
+    if not isinstance(node, ast.Call):
+        return None
+    func = node.func
+    func_name = func.id if isinstance(func, ast.Name) else getattr(func, "attr", None)
+    if func_name != "Field":
+        return None
+    for kw in node.keywords:
+        if kw.arg == "description":
+            return _str_from(kw.value)
+    return None
+
+
 def _extract_annotated_desc(annotation):
     """Return the first string metadata inside Annotated[...] or union arms; else None."""
     if annotation is None:
         return None
 
     # Annotated[T, "desc", ...] -> Subscript with value Name("Annotated") and slice Tuple
+    # Also handles Annotated[T, Field(description="desc")].
     if isinstance(annotation, ast.Subscript):
         value = annotation.value
         if isinstance(value, ast.Name) and value.id == "Annotated":
@@ -42,6 +57,8 @@ def _extract_annotated_desc(annotation):
             if isinstance(slice_node, ast.Tuple) and len(slice_node.elts) >= 2:
                 for elt in slice_node.elts[1:]:
                     s = _str_from(elt)
+                    if s is None:
+                        s = _field_desc_from(elt)
                     if s is not None:
                         return s
         # Subscript on other types — could be Optional[Annotated[...]] etc., recurse

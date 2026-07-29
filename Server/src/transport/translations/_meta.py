@@ -18,6 +18,11 @@ Resources vs Tools：
 - 使用 TOOLS 執行動作與變更（manage_editor 用於 play mode 控制、tag/layer 管理等）
 - 使用 tools 修改引擎狀態前，請一律先檢查相關 resources
 
+讀取 resources（使用下方任何 resource 前請先讀這段）：
+- Resources 一律以 URI 定址，絕不以名稱定址。Resource 的名稱與 URI「不可」互換：名稱使用底線（例如 editor_state），URI 使用斜線（例如 mcpforunity://editor/state）。不要把名稱的分隔符換掉來拼 URI — 會得到 404。
+- 一律從你的 MCP client 的 resource 清單（resources/list）讀取精確的 URI。本說明以名稱提到 resource 時，請到清單中查其 URI，不要用猜的。
+- Resource payload 有包裝：內容位於最上層的 `data` 物件之下，所以欄位路徑是 `data.<section>.<field>`（例如 `data.advice.ready_for_tools`），不是最上層欄位。
+
 Script 管理：
 - 建立或修改 scripts（透過你自己的 tools 或 `manage_script` tool）後，繼續前請使用 `read_console` 檢查編譯錯誤
 - 只有編譯成功後，才能使用新的 Component/type
@@ -76,6 +81,11 @@ Resources vs Tools：
 - 使用 TOOLS 執行動作與變更（manage_editor 用於 play mode 控制、tag/layer 管理等）
 - 使用 tools 修改引擎狀態前，請一律先檢查相關 resources
 
+讀取 resources（使用下方任何 resource 前請先讀這段）：
+- Resources 一律以 URI 定址，絕不以名稱定址。Resource 的名稱與 URI「不可」互換：名稱使用底線（例如 editor_state），URI 使用斜線（例如 mcpforunity://editor/state）。不要把名稱的分隔符換掉來拼 URI — 會得到 404。
+- 一律從你的 MCP client 的 resource 清單（resources/list）讀取精確的 URI。本說明以名稱提到 resource 時，請到清單中查其 URI，不要用猜的。
+- Resource payload 有包裝：內容位於最上層的 `data` 物件之下，所以欄位路徑是 `data.<section>.<field>`（例如 `data.advice.ready_for_tools`），不是最上層欄位。
+
 Script 管理：
 - 建立或修改 scripts（透過你自己的 tools 或 `manage_script` tool）後，繼續前請使用 `read_console` 檢查編譯錯誤
 - 只有編譯成功後，才能使用新的 Component/type
@@ -129,4 +139,5 @@ GROUP_TRANSLATIONS = {
     'testing': 'Test runner 與 async test jobs',
     'probuilder': 'ProBuilder 3D 建模－需要 com.unity.probuilder package',
     'profiling': 'Unity Profiler session 控制、計數器、記憶體快照與 Frame Debugger',
+    'asset_gen': 'AI asset 生成－3D 模型生成／匯入、2D 圖片生成與音訊生成（自帶金鑰）',
 }

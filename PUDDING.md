@@ -67,16 +67,16 @@ Expected savings: MCP traffic **~93%**, Codex agent total **~66%**. Tune the whi
 
 Set `UNITY_MCP_LANG=zh_TW` to get **Traditional Chinese (Taiwan) tool schemas**. Coverage:
 
-- All 39 tools — `description`, `ToolAnnotations.title`, every `Annotated[T, "..."]` parameter description
+- All 48 tools — `description`, `ToolAnnotations.title`, every `Annotated[T, "..."]` / `Annotated[T, Field(description=...)]` parameter description
 - The high-level `_build_instructions()` text
-- The 9 `TOOL_GROUPS` descriptions
+- The 10 `TOOL_GROUPS` descriptions
 
 The translation layer mutates `func.__annotations__` at decorator time before FastMCP reads the schema, so MCP clients (Claude, Codex, Cursor) see Chinese natively — no extra config on the client side.
 
 **Behaviour:**
 - Default `en` is a complete no-op — original strings reach FastMCP unchanged.
 - Missing translations (e.g. an upstream tool added after the translation table was written) fall back to English silently. No errors, no warnings.
-- Translations live in `Server/src/transport/translations/zh_TW.py` (which composes `_batch1`–`_batch4` and `_meta`). Edit those files to fix wording.
+- Translations live in `Server/src/transport/translations/zh_TW.py` (which composes `_batch1`–`_batch5` and `_meta`). Edit those files to fix wording.
 
 **Adding a new language:**
 1. Create `Server/src/transport/translations/<bcp47>.py` (e.g. `ja_JP.py`).

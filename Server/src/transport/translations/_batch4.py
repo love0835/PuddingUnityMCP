@@ -23,7 +23,8 @@ BATCH_4 = {
             "assembly_names": "用於篩選 tests 的 Assembly 名稱",
             "include_failed_tests": "僅包含失敗／略過 tests 的詳細資料（預設：false）",
             "include_details": "包含所有 tests 的詳細資料（預設：false）",
-            "init_timeout": "初始化逾時時間，單位為毫秒。PlayMode tests 可能因 domain reload 需要更長時間（預設：15000）。建議：PlayMode 使用 120000。"
+            "init_timeout": "初始化逾時時間，單位為毫秒。PlayMode tests 可能因 domain reload 需要更長時間（預設：15000）。建議：PlayMode 使用 120000。",
+            "clear_stuck": "清除孤立的執行中 job，而非啟動新的執行。當 job 因 domain reload 遺失並阻擋後續所有執行時使用。"
         }
     },
     "get_test_job": {

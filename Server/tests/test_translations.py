@@ -149,6 +149,33 @@ def test_annotation_rewrite_inside_union_with_none():
         _cleanup_fake_lang("fake_lang_e")
 
 
+def test_annotation_rewrite_pydantic_field_metadata():
+    """Upstream tools that use Annotated[T, Field(description=...)] must translate too."""
+    from pydantic import Field
+
+    _install_fake_lang(
+        "fake_lang_field",
+        tools={"sample": {"params": {"x": "中文 Field 描述"}}},
+    )
+
+    original_field = Field(default="by_name", description="english field desc")
+
+    async def sample(x: Annotated[str, original_field] = "by_name") -> None:  # type: ignore[empty-body]
+        ...
+
+    try:
+        apply_translation_to_func(sample, "sample", None, tool_kwargs={}, lang="fake_lang_field")
+        from typing import get_args
+        meta = get_args(sample.__annotations__["x"])
+        assert meta[1].description == "中文 Field 描述"
+        # The original FieldInfo object must not be mutated (it may be shared).
+        assert original_field.description == "english field desc"
+        # Non-description Field attributes survive the copy.
+        assert meta[1].default == "by_name"
+    finally:
+        _cleanup_fake_lang("fake_lang_field")
+
+
 def test_annotation_rewrite_skips_unknown_params():
     _install_fake_lang(
         "fake_lang_f",
@@ -241,3 +268,48 @@ def test_zh_TW_module_loads_read_console_from_batch1():
     assert "action" in entry["params"]
     # Sanity check: contains Chinese characters
     assert any("一" <= ch <= "鿿" for ch in entry["description"])
+
+
+def test_zh_TW_module_loads_asset_gen_tools_from_batch5():
+    """Confirms the asset_gen tools added in upstream v10.x are translated."""
+    from transport.translations import _LANG_MODULES
+    _LANG_MODULES.pop("zh_TW", None)
+    for tool in ("generate_model", "generate_image", "generate_audio",
+                 "import_model", "import_model_file"):
+        entry = get_translation(tool, "zh_TW")
+        assert entry is not None, f"{tool} missing from zh_TW; _batch5 not loading"
+        assert any("一" <= ch <= "鿿" for ch in entry["description"])
+
+
+def test_zh_TW_covers_all_current_tool_schemas():
+    """Every string the extractor finds in tools/ must have a zh_TW counterpart.
+
+    Guards against upstream merges adding tools or params without translations.
+    Field(description=...) params are included via the extractor's Field support.
+    """
+    import sys
+    from pathlib import Path
+
+    server_root = Path(__file__).resolve().parent.parent
+    sys.path.insert(0, str(server_root / "scripts"))
+    try:
+        import extract_strings
+    finally:
+        sys.path.pop(0)
+
+    from transport.translations.zh_TW import TOOL_TRANSLATIONS
+
+    tools_dir = server_root / "src" / "services" / "tools"
+    problems = []
+    for tool_file in sorted(tools_dir.glob("*.py")):
+        if tool_file.name == "__init__.py":
+            continue
+        for tool_name, entry in extract_strings.extract_from_file(tool_file):
+            tr = TOOL_TRANSLATIONS.get(tool_name)
+            if tr is None:
+                problems.append(f"{tool_name}: no zh_TW entry")
+                continue
+            for param in entry.get("params", {}):
+                if param not in tr.get("params", {}):
+                    problems.append(f"{tool_name}.{param}: param untranslated")
+    assert not problems, "zh_TW out of sync with tool schemas:\n" + "\n".join(problems)

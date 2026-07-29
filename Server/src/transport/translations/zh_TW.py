@@ -13,8 +13,8 @@ from __future__ import annotations
 import importlib
 from typing import Any
 
-_BATCH_MODULES = ("_batch1", "_batch2", "_batch3", "_batch4")
-_BATCH_VAR_NAMES = ("BATCH_1", "BATCH_2", "BATCH_3", "BATCH_4")
+_BATCH_MODULES = ("_batch1", "_batch2", "_batch3", "_batch4", "_batch5")
+_BATCH_VAR_NAMES = ("BATCH_1", "BATCH_2", "BATCH_3", "BATCH_4", "BATCH_5")
 
 
 def _load_all_batches() -> dict[str, dict[str, Any]]:
