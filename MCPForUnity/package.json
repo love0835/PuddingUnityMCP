@@ -1,6 +1,6 @@
 {
   "name": "com.pudding.unity-mcp",
-  "version": "10.1.1-beta.2",
+  "version": "10.1.1-beta.3",
   "displayName": "PuddingUnityMCP",
   "description": "PuddingUnityMCP — love0835's fork of MCP for Unity (CoplayDev/unity-mcp) with Traditional Chinese (zh_TW) tool schemas and editor UI, plus token-saver middleware.\n\nA bridge that connects AI assistants to Unity via the MCP (Model Context Protocol). Allows AI clients like Claude Code, Cursor, and VSCode to directly control your Unity Editor for enhanced development workflows.\n\nFeatures automated setup wizard, cross-platform support, and seamless integration with popular AI development tools.\n\nJoin Our Discord: https://discord.gg/y4p8KfzrN4",
   "unity": "2021.3",
