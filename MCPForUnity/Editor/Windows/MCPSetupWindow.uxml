@@ -4,14 +4,14 @@
     <ui:ScrollView name="root-container" mode="Vertical">
         <ui:VisualElement name="setup-header" class="setup-header">
             <!-- OceanMark logo is injected here at index 0 in CreateGUI -->
-            <ui:Label text="MCP for Unity Setup" name="title" class="title" />
+            <ui:Label text="PuddingUnityMCP Setup" name="title" class="title" />
         </ui:VisualElement>
 
         <ui:VisualElement name="step-deps">
             <ui:VisualElement class="section">
                 <ui:Label text="System Requirements" class="section-title" />
                 <ui:VisualElement class="section-content">
-                    <ui:Label text="MCP for Unity requires Python 3.10+ and UV package manager to function." class="help-text description-text" />
+                    <ui:Label text="PuddingUnityMCP requires Python 3.10+ and UV package manager to function." class="help-text description-text" />
 
                     <!-- Dependency Status -->
                     <ui:VisualElement name="dependency-list">

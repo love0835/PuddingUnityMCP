@@ -3,7 +3,8 @@ namespace MCPForUnity.Editor.Constants
     /// <summary>Canonical user-facing product identity strings.</summary>
     public static class ProductInfo
     {
-        public const string ProductName = "MCP for Unity";
-        public const string MenuRoot = "Window/MCP for Unity";
+        // PuddingUnityMCP fork: rebranded so the fork is not mistaken for upstream MCP for Unity.
+        public const string ProductName = "PuddingUnityMCP";
+        public const string MenuRoot = "Window/PuddingUnityMCP";
     }
 }

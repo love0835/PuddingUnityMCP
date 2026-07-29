@@ -1,11 +1,11 @@
 {
-  "name": "com.coplaydev.unity-mcp",
+  "name": "com.pudding.unity-mcp",
   "version": "10.1.1-beta.2",
-  "displayName": "MCP for Unity",
-  "description": "A bridge that connects AI assistants to Unity via the MCP (Model Context Protocol). Allows AI clients like Claude Code, Cursor, and VSCode to directly control your Unity Editor for enhanced development workflows.\n\nFeatures automated setup wizard, cross-platform support, and seamless integration with popular AI development tools.\n\nJoin Our Discord: https://discord.gg/y4p8KfzrN4",
+  "displayName": "PuddingUnityMCP",
+  "description": "PuddingUnityMCP — love0835's fork of MCP for Unity (CoplayDev/unity-mcp) with Traditional Chinese (zh_TW) tool schemas and editor UI, plus token-saver middleware.\n\nA bridge that connects AI assistants to Unity via the MCP (Model Context Protocol). Allows AI clients like Claude Code, Cursor, and VSCode to directly control your Unity Editor for enhanced development workflows.\n\nFeatures automated setup wizard, cross-platform support, and seamless integration with popular AI development tools.\n\nJoin Our Discord: https://discord.gg/y4p8KfzrN4",
   "unity": "2021.3",
-  "documentationUrl": "https://github.com/CoplayDev/unity-mcp",
-  "licensesUrl": "https://github.com/CoplayDev/unity-mcp/blob/main/LICENSE",
+  "documentationUrl": "https://github.com/love0835/PuddingUnityMCP",
+  "licensesUrl": "https://github.com/love0835/PuddingUnityMCP/blob/beta/LICENSE",
   "dependencies": {
     "com.unity.modules.animation": "1.0.0",
     "com.unity.modules.imageconversion": "1.0.0",
@@ -27,8 +27,8 @@
     "mcp-client"
   ],
   "author": {
-    "name": "Coplay",
-    "email": "support@coplay.dev",
-    "url": "https://coplay.dev"
+    "name": "love0835",
+    "email": "love0835@gmail.com",
+    "url": "https://github.com/love0835/PuddingUnityMCP"
   }
 }

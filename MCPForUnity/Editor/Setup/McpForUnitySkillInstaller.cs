@@ -36,7 +36,7 @@ namespace MCPForUnity.Editor.Setup
         private void OnEnable()
         {
             var userHome = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-            _repoUrl = EditorPrefs.GetString(RepoUrlKey, "https://github.com/CoplayDev/unity-mcp");
+            _repoUrl = EditorPrefs.GetString(RepoUrlKey, "https://github.com/love0835/PuddingUnityMCP");
             _targetBranch = EditorPrefs.GetString(BranchKey, "beta");
             if (!BranchOptions.Contains(_targetBranch))
             {

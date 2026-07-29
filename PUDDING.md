@@ -4,6 +4,17 @@ This fork of [CoplayDev/unity-mcp](https://github.com/CoplayDev/unity-mcp) adds 
 
 Upstream behaviour is unchanged when no fork env vars are set. Setting any of them turns the saver on.
 
+## Package identity
+
+The Unity package is rebranded so it is not mistaken for upstream:
+
+- Package id: `com.pudding.unity-mcp` (upstream: `com.coplaydev.unity-mcp`)
+- Display name / window title / menu: **PuddingUnityMCP** (`Window > PuddingUnityMCP`)
+- Install via git URL: `https://github.com/love0835/PuddingUnityMCP.git?path=/MCPForUnity#beta`
+- Update checks and the skill installer point at this repo, not upstream.
+
+If you previously installed upstream's `com.coplaydev.unity-mcp`, remove it in the Package Manager before adding this package — the two ids would otherwise conflict class-for-class.
+
 ## Why this fork exists
 
 [MCPzip](https://github.com/love0835/MCPzip) measured CoplayDev/unity-mcp v9.4.8 and found the same MCP traffic could be reduced **>90%** via four strategies (tool whitelist, query limits, semantic compression, summary+reference). MCPzip implemented those as an external proxy. This fork moves the strategies **inside the server**, so every client that connects automatically benefits — no per-client proxy install.
