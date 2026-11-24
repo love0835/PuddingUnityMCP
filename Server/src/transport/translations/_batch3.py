@@ -187,7 +187,7 @@ BATCH_3 = {
             "mode": "重新整理模式。",
             "scope": "重新整理範圍。",
             "compile": "是否要求編譯。",
-            "wait_for_ready": "若為 true，等待 editor_state.advice.ready_for_tools 變成 true。",
+            "wait_for_ready": "若為 true，等待 mcpforunity://editor/state 回報 data.advice.ready_for_tools 為 true。",
         },
     },
     "debug_request_context": {

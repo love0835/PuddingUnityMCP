@@ -2,7 +2,7 @@
 Traditional Chinese (Taiwan) translations for PuddingUnityMCP tool schemas.
 
 This module is the public entry point for ``UNITY_MCP_LANG=zh_TW``. It composes
-``TOOL_TRANSLATIONS`` from per-batch modules (``_batch1`` … ``_batch4``) and pulls
+``TOOL_TRANSLATIONS`` from per-batch modules (``_batch1`` … ``_batch6``) and pulls
 high-level instructions + group descriptions from ``_meta``.
 
 Batch files are populated by ``codex exec`` workers (see PUDDING.md). Missing
@@ -13,8 +13,8 @@ from __future__ import annotations
 import importlib
 from typing import Any
 
-_BATCH_MODULES = ("_batch1", "_batch2", "_batch3", "_batch4", "_batch5")
-_BATCH_VAR_NAMES = ("BATCH_1", "BATCH_2", "BATCH_3", "BATCH_4", "BATCH_5")
+_BATCH_MODULES = ("_batch1", "_batch2", "_batch3", "_batch4", "_batch5", "_batch6")
+_BATCH_VAR_NAMES = ("BATCH_1", "BATCH_2", "BATCH_3", "BATCH_4", "BATCH_5", "BATCH_6")
 
 
 def _load_all_batches() -> dict[str, dict[str, Any]]:

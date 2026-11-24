@@ -14,19 +14,20 @@ INSTRUCTIONS_BY_SCOPE = {
 重要工作流程：
 
 Resources vs Tools：
-- 使用 RESOURCES 讀取 Editor 狀態（editor_state、project_info、project_tags、tests 等）
+- 使用 RESOURCES 讀取 Editor 狀態（mcpforunity://editor/state、mcpforunity://project/info、mcpforunity://project/tags、mcpforunity://tests 等）
 - 使用 TOOLS 執行動作與變更（manage_editor 用於 play mode 控制、tag/layer 管理等）
 - 使用 tools 修改引擎狀態前，請一律先檢查相關 resources
 
 讀取 resources（使用下方任何 resource 前請先讀這段）：
 - Resources 一律以 URI 定址，絕不以名稱定址。Resource 的名稱與 URI「不可」互換：名稱使用底線（例如 editor_state），URI 使用斜線（例如 mcpforunity://editor/state）。不要把名稱的分隔符換掉來拼 URI — 會得到 404。
-- 一律從你的 MCP client 的 resource 清單（resources/list）讀取精確的 URI。本說明以名稱提到 resource 時，請到清單中查其 URI，不要用猜的。
+- 本說明一律以完整的 mcpforunity:// URI 寫出 resources — 請照寫的原樣讀取。若你只有名稱（來自 resources/list 或其他工具的輸出），請到 resources/list 查其 URI，不要用猜的。
 - Resource payload 有包裝：內容位於最上層的 `data` 物件之下，所以欄位路徑是 `data.<section>.<field>`（例如 `data.advice.ready_for_tools`），不是最上層欄位。
+- mcpforunity:// URI 命名的是 resource，不是 server。有些 client 在讀取 resource 時需要另外指定 server key — 在 Codex 中，tools 以 mcp__unityMCP__* 公開，但 resources/read 需要 server: "unityMCP"。若讀取因 unknown-server 錯誤失敗，請先列出 resources，並完全照回傳的 key 使用。
 
 Script 管理：
 - 建立或修改 scripts（透過你自己的 tools 或 `manage_script` tool）後，繼續前請使用 `read_console` 檢查編譯錯誤
 - 只有編譯成功後，才能使用新的 Component/type
-- 你可以輪詢 `editor_state` resource 的 `isCompiling` 欄位，檢查 domain reload 是否完成
+- 你可以輪詢 mcpforunity://editor/state 並讀取 `data.compilation.is_compiling` 檢查 domain reload 是否完成，或讀取 `data.advice.ready_for_tools` 判斷整體是否就緒
 
 Scene 設定：
 - 新 Scene 中一律包含 Camera 與 main Light（Directional Light）
@@ -42,7 +43,7 @@ Console 監控：
 - 依 log 類型（Error、Warning、Log）過濾，以聚焦特定問題
 
 Menu Items：
-- 讀取 menu items resource 後，使用 `execute_menu_item`
+- 讀取 mcpforunity://menu-items resource 後，使用 `execute_menu_item`
 - 這可讓你與 Unity 的選單系統和第三方 tools 互動
 
 Unity API 驗證（需要 'docs' tool group）：
@@ -77,19 +78,20 @@ Custom tools 會在 Unity 連線時註冊為標準 tools。沒有可用的 proje
 重要工作流程：
 
 Resources vs Tools：
-- 使用 RESOURCES 讀取 Editor 狀態（editor_state、project_info、project_tags、tests 等）
+- 使用 RESOURCES 讀取 Editor 狀態（mcpforunity://editor/state、mcpforunity://project/info、mcpforunity://project/tags、mcpforunity://tests 等）
 - 使用 TOOLS 執行動作與變更（manage_editor 用於 play mode 控制、tag/layer 管理等）
 - 使用 tools 修改引擎狀態前，請一律先檢查相關 resources
 
 讀取 resources（使用下方任何 resource 前請先讀這段）：
 - Resources 一律以 URI 定址，絕不以名稱定址。Resource 的名稱與 URI「不可」互換：名稱使用底線（例如 editor_state），URI 使用斜線（例如 mcpforunity://editor/state）。不要把名稱的分隔符換掉來拼 URI — 會得到 404。
-- 一律從你的 MCP client 的 resource 清單（resources/list）讀取精確的 URI。本說明以名稱提到 resource 時，請到清單中查其 URI，不要用猜的。
+- 本說明一律以完整的 mcpforunity:// URI 寫出 resources — 請照寫的原樣讀取。若你只有名稱（來自 resources/list 或其他工具的輸出），請到 resources/list 查其 URI，不要用猜的。
 - Resource payload 有包裝：內容位於最上層的 `data` 物件之下，所以欄位路徑是 `data.<section>.<field>`（例如 `data.advice.ready_for_tools`），不是最上層欄位。
+- mcpforunity:// URI 命名的是 resource，不是 server。有些 client 在讀取 resource 時需要另外指定 server key — 在 Codex 中，tools 以 mcp__unityMCP__* 公開，但 resources/read 需要 server: "unityMCP"。若讀取因 unknown-server 錯誤失敗，請先列出 resources，並完全照回傳的 key 使用。
 
 Script 管理：
 - 建立或修改 scripts（透過你自己的 tools 或 `manage_script` tool）後，繼續前請使用 `read_console` 檢查編譯錯誤
 - 只有編譯成功後，才能使用新的 Component/type
-- 你可以輪詢 `editor_state` resource 的 `isCompiling` 欄位，檢查 domain reload 是否完成
+- 你可以輪詢 mcpforunity://editor/state 並讀取 `data.compilation.is_compiling` 檢查 domain reload 是否完成，或讀取 `data.advice.ready_for_tools` 判斷整體是否就緒
 
 Scene 設定：
 - 新 Scene 中一律包含 Camera 與 main Light（Directional Light）
@@ -105,7 +107,7 @@ Console 監控：
 - 依 log 類型（Error、Warning、Log）過濾，以聚焦特定問題
 
 Menu Items：
-- 讀取 menu items resource 後，使用 `execute_menu_item`
+- 讀取 mcpforunity://menu-items resource 後，使用 `execute_menu_item`
 - 這可讓你與 Unity 的選單系統和第三方 tools 互動
 
 Unity API 驗證（需要 'docs' tool group）：
@@ -133,7 +135,7 @@ GROUP_TRANSLATIONS = {
     'core': '必要的 Scene、script、Asset 與 Editor tools（預設一律啟用）',
     'docs': 'Unity API 反射與文件查詢',
     'vfx': '視覺效果－VFX Graph、Shader、程序式貼圖',
-    'animation': 'Animator 控制與 AnimationClip 建立',
+    'animation': 'Animator 控制、AnimationClip 建立與 2D sprite sheet 動畫',
     'ui': 'UI Toolkit（UXML、USS、UIDocument）',
     'scripting_ext': 'ScriptableObject 管理',
     'testing': 'Test runner 與 async test jobs',
